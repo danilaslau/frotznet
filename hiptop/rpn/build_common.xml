@@ -1,0 +1,193 @@
+
+	<!-- Set global properties for this build -->
+
+	<!-- Environment variables from the OS environment -->
+	<property environment="env"/>
+	<property name="DANGERUSER" value="${env.DANGER_USER}"/>
+
+	<!-- OS names used to select OS-dependent executables -->
+	<property name="WIN98OSNAME" value="Windows 98"/>
+	<property name="WIN2KOSNAME" value="Windows 2000"/>
+	<property name="WINXPOSNAME" value="Windows XP"/>
+	<property name="LINUXOSNAME" value="Linux"/>
+	<property name="MACOSOSNAME" value="Mac OS X"/>
+
+	<target name="clean"
+	        description="Delete all compiled files from the current app directory">
+		<delete quiet="true">
+			<fileset dir="." includes="*.rdb"/>
+			<fileset dir="." includes="*.bndl"/>
+			<fileset dir="." includes="*.lst"/>
+		</delete>
+		<delete quiet="true" file="${APPNAME}.jar"/>
+		<delete quiet="true" dir="classes"/>
+	</target>
+
+	<target name="define-tool-path" depends="define-sdk-home"
+			description="Setup tool paths based on OS.">
+		<condition property="TOOLPATH" value="${TOOLS}/win32">
+			<or>
+				<os name="${WIN98OSNAME}"/>
+				<os name="${WIN2KOSNAME}"/>
+				<os name="${WINXPOSNAME}"/>
+			</or>
+		</condition>
+		<condition property="TOOLEXT" value=".exe">
+			<or>
+				<os name="${WIN98OSNAME}"/>
+				<os name="${WIN2KOSNAME}"/>
+				<os name="${WINXPOSNAME}"/>
+			</or>
+		</condition>
+		<condition property="TOOLPATH" value="${TOOLS}/linux">
+			<os name="${LINUXOSNAME}"/>
+		</condition>
+		<condition property="TOOLEXT" value="">
+			<os name="${LINUXOSNAME}"/>
+		</condition>
+		<condition property="TOOLPATH" value="${TOOLS}/macosx">
+			<os name="${MACOSOSNAME}"/>
+		</condition>
+		<condition property="TOOLEXT" value="">
+			<os name="${MACOSOSNAME}"/>
+		</condition>
+	</target>
+
+	<target name="define-sdk-home"
+			description="Set a default for DANGERHOME if DANGER_HOME isn't set in the environment.">
+		<condition property="DANGERHOME" value="${env.DANGER_HOME}">
+			<isset property="env.DANGER_HOME"/>
+		</condition>
+		<condition property="DANGERHOME" value="../..">
+			<not>
+				<isset property="env.DANGER_HOME"/>
+			</not>
+		</condition>
+		<property name="TOOLS"		value="${DANGERHOME}/tools"/>
+		<property name="LIBS"		value="${DANGERHOME}/libs"/>
+		<property name="CLASSPATH"	value="${LIBS}/library.jar"/>
+	</target>
+
+    <target name="run-color"
+			description="Run the Simulator in color including the application JAR from the current directory">
+		<java classname="danger.Boot"
+			  fork="true"
+		      dir="${DANGERHOME}">
+		 <jvmarg value="-Dcom.danger.username=${DANGERUSER}"/>
+		 <jvmarg value="-Dcom.danger.screen.color_space=color16"/>
+         <classpath>
+           <pathelement location="${LIBS}/library.jar"/>
+           <pathelement location="${LIBS}/simulator.jar"/>
+           <pathelement location="${APPNAME}.jar"/>
+         </classpath>
+		 </java>
+	</target>
+
+    <target name="run-gray"
+			description="Run the Simulator in grayscale including the application JAR from the current directory">
+		<java classname="danger.Boot"
+			  fork="true"
+		      dir="${DANGERHOME}">
+		 <jvmarg value="-Dcom.danger.username=${DANGERUSER}"/>
+		 <jvmarg value="-Dcom.danger.screen.color_space=gray4"/>
+         <classpath>
+           <pathelement location="${LIBS}/library.jar"/>
+           <pathelement location="${LIBS}/simulator.jar"/>
+           <pathelement location="${APPNAME}.jar"/>
+         </classpath>
+		 </java>
+	</target>
+
+    <target name="jar"
+			description="Create an application JAR file that can be included in the Simulator">
+		  <jar destfile="${APPNAME}.jar" basedir="classes"/>
+	</target>
+
+    <target name="dat" depends="define-tool-path"
+			description="Convert the compiled resources into a bundle (.dat)">
+		<exec 
+			dir="." 
+			executable="${TOOLPATH}/mkbundle${TOOLEXT}" 
+			failonerror="true">
+			<arg line="-o classes/application.dat ${APPNAME}.rdb"/>
+		</exec>       
+	</target>
+
+    <target name="bundle" depends="define-tool-path"
+			description="Link the compiled classes into an application bundle (.bndl)">
+		<exec 
+			dir="." 
+			executable="${TOOLPATH}/mkbundle${TOOLEXT}" 
+			failonerror="true"> 
+			<arg line="-o ${APPNAME}.bndl ${LIBS}/library.link classes ${APPNAME}.rdb -l ${APPNAME}.lst"/>
+		</exec>       
+	</target>
+
+    <target name="resources-gray-no-headers" depends="define-tool-path"
+			description="Compile the resource file (.rsrc) into a grayscale resource database (.rdb), but don't output the Java interface files">
+		<exec 
+			dir="." 
+			executable="${TOOLPATH}/drc${TOOLEXT}" 
+			failonerror="true"> 
+			<arg line="-se -sr -Dbase=assets/default/gray/ -i ${APPNAME}.rsrc -o ${APPNAME}.rdb"/>
+		</exec>       
+	</target>
+
+    <target name="resources-color-no-headers" depends="define-tool-path"
+			description="Compile the resource file (.rsrc) into a color resource database (.rdb), but don't output the Java interface files">
+		<exec 
+			dir="." 
+			executable="${TOOLPATH}/drc${TOOLEXT}" 
+			failonerror="true"> 
+			<arg line="-se -sr -Dbase=assets/default/color/,assets/default/gray/ -C -i ${APPNAME}.rsrc -o ${APPNAME}.rdb"/>
+		</exec>       
+	</target>
+
+    <target name="resources-gray" depends="define-tool-path"
+			description="Compile the resource file (.rsrc) into a grayscale resource database (.rdb), and output the Java interface files">
+		<exec 
+			dir="." 
+			executable="${TOOLPATH}/drc${TOOLEXT}" 
+			failonerror="true"> 
+			<arg line="-Dbase=assets/default/gray/ -i ${APPNAME}.rsrc -o ${APPNAME}.rdb"/>
+		</exec>       
+	</target>
+
+    <target name="resources-color" depends="define-tool-path"
+			description="Compile the resource file (.rsrc) into a color resource database (.rdb), and output the Java interface files">
+		<exec 
+			dir="." 
+			executable="${TOOLPATH}/drc${TOOLEXT}" 
+			failonerror="true"> 
+			<arg line="-Dbase=assets/default/color/,assets/default/gray/ -C -i ${APPNAME}.rsrc -o ${APPNAME}.rdb"/>
+		</exec>       
+	</target>
+
+    <target name="classes"
+			description="Compile the Java source files">
+		<delete dir="classes"/>
+		<mkdir dir="classes"/>
+
+		<javac srcdir="." 
+       		   destdir="classes"
+			   classpath="${CLASSPATH}"
+			   debug="on">
+	       <include name="*.java"/>
+		</javac>
+	</target>
+
+    <target name="build-color" depends="define-sdk-home,resources-color,classes,bundle,dat,jar"
+			description="Build all the targets required to produce an application JAR file that can be used in color">
+	</target>
+
+    <target name="build-gray" depends="define-sdk-home,resources-gray,classes,bundle,dat,jar"
+			description="Build all the targets required to produce an application JAR file that can be used in grayscale">
+	</target>
+
+    <target name="build-n-run-color" depends="build-color,run-color"
+			description="Build all the targets required to produce an application JAR file that can be used in color">
+	</target>
+
+    <target name="build-n-run-gray" depends="build-gray,run-gray"
+			description="Build all the targets required to produce an application JAR file that can be used in grayscale">
+	</target>

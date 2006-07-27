@@ -1,0 +1,12 @@
+string ID_APP_NAME "Japanese Input Support"
+string ID_APP_CLASS "net.frotz.jp_im.Japanese"
+string ID_APP_FLAGS "L"
+
+bitmap ID_LARGE_ICON "graphics/icon32.png"
+bitmap ID_SMALL_ICON "graphics/icon16.png"
+
+string ID_LOCALE    "en_US"
+
+data 2 1000 "kana.map"
+#data 1 1000 "jiskan16.font.z"
+#data 3 1000 "dictionary.db.z"

@@ -1,0 +1,14 @@
+
+This is a really, really rough start at a Japanese Input Method for
+the hiptop.  If you alt-space in a textfield, you'll enter romaji->kana
+mode.  Enter will commit a sequence.  Space will invoke the kana->kanji
+dictionary.  Alt-space will cancel the mode.
+
+The dictionary stuff is missing from this package right now.  I need
+to clean up the pubdic import tools and make the dictionary lookup
+less broken.
+
+kana.euc -- romaji->kana map, euc-jp encoded  (brian can edit this)
+kana.u16 -- romaji->kana map, ucs-2le encoded (map.c reads this)
+kana.map -- encoded romaji->kana map (map.c produces this)
+

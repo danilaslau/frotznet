@@ -1,0 +1,10 @@
+string ID_APP_NAME "Dictionary"
+string ID_APP_CLASS "net.frotz.dictionary.Dictionary"
+
+bitmap ID_LARGE_ICON "graphics/icon32.png"
+bitmap ID_SMALL_ICON "graphics/icon16.png"
+
+string ID_LOCALE    "en_US"
+
+data 1 1000 "edict.dat.z"
+data 2 1000 "edict.idx.z"
