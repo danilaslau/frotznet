@@ -1,0 +1,61 @@
+
+package "net.frotz.rpn"
+
+interface "Resources.java"
+events "Events.java"
+
+string ID_APP_NAME "RPN Calculator"
+string ID_APP_CLASS "net.frotz.rpn.RPN"
+
+#bitmap ID_LARGE_ICON "graphics/icon32.png"
+#bitmap ID_SMALL_ICON "graphics/icon16.png"
+
+string ID_LOCALE "en_US"
+
+menu MENU_MAIN
+	menuItem
+		title="Toggle QuickReference"
+		event=DO_TOGGLE_HELP
+	menuItem
+		title="Toggle Scientific"
+		event=DO_TOGGLE_SCI
+	menuItem
+		title="About..."
+		event=DO_ABOUT_BOX
+endMenu
+
+dialog DIALOG_ABOUT centerVertically centerHorizontally
+	title = "RPN Calculator v0.33333"
+
+	staticText
+		alignWithParentTop = 2
+		text="Copyright 2003, Brian Swetland"
+		left=3 fillToRight=3
+		id=TEXTA
+		justifyCenter
+
+	staticText
+		positionBelow=TEXTA:6
+		text="floating point math library"
+		left=3 fillToRight=3
+		id=TEXTB
+		justifyCenter
+
+	staticText
+		positionBelow=TEXTB:2
+		text="Copyright 2003, Dan Sachs"
+		left=3 fillToRight=3
+		id=TEXTC
+		justifyCenter
+
+	staticText
+		positionBelow=TEXTC:6
+		text="Share and Enjoy!"
+		left=3 fillToRight=3
+		id=TEXTD
+		justifyCenter
+
+	button title=okButton position=buttonBottom1
+		initialFocus
+
+endDialog

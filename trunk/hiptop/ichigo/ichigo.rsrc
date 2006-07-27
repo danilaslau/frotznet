@@ -1,0 +1,12 @@
+# -*- coding: utf-8 -*-
+
+package "org.cursetheyagudo.ichigo"
+
+string ID_APP_NAME "ichigo"
+string ID_APP_CLASS "org.cursetheyagudo.ichigo.ichigo"
+string ID_LOCALE    "en_US"
+
+#bitmap ID_LARGE_ICON "{base}LargeIcon.png"
+#bitmap ID_SMALL_ICON "{base}SmallIcon.png"
+#bitmap ID_SPLASH_SCREEN "{base}SplashScreen.png"
+

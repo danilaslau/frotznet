@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project [<!ENTITY IncludeCommon SYSTEM "build_common.xml">]>
+
+<project name="terminal" default="build-n-run-color" basedir=".">
+    <property name="APPNAME"	 value="rpn"/>
+    <property name="PACKAGENAME" value="frotz.net.rpn"/>
+    &IncludeCommon;
+</project>
